@@ -1,8 +1,9 @@
 *.sqlite3
 media/*
+venv/*
 *.pyc
 **/__pycache__/*
-**/migrations/*
+homework/flight_scoreboard/migrations/__init__.py
 <<<<<<< HEAD
 *.log
 =======
