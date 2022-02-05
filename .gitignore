@@ -1,7 +1,7 @@
 *.sqlite3
 media/*
 venv/*
-*.idea/
+.idea/*
 *.pyc
 **/__pycache__/*
 homework/flight_scoreboard/migrations/__init__.py
