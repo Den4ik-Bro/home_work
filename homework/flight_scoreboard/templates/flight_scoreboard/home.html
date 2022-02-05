@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Главная страница{% endblock %}
+
+{%block content%}
+    <h1 style="text-align:center;">Табло полетов</h1>
+
+    <table align="center" cellspacing="3" border="4" width="10">
+        <tr>
+            <th>Номер</th>
+            <th>Тип самолета</th>
+            <th>Город отправления</th>
+            <th>Время отправления</th>
+            <th>Город прибытия</th>
+            <th>Время прибытия</th>
+            <th>Статус</th>
+        </tr>
+        {% for flight in flights %}
+        <tr>
+            <td><a href="{% url 'flight_scoreboard:current_flight' flight.id %}">{{flight.number}}</a></td>
+            <td>{{flight.type_airplane}}</td>
+            <td>{{flight.dispatch_city}}</td>
+            <td>{{flight.departure_time|date:"d/m/Y H:i"}}</td>
+            <td>{{flight.arrival_city}}</td>
+            <td>{{flight.arrival_time|date:"d/m/Y H:i"}}</td>
+            <td>{{flight.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <div style="text-align:center;">
+        <a href="{% url 'flight_scoreboard:create_flight' %}"><input type="button" value="создать новый рейс"></a>
+        <br>
+        <br>
+        <form action="." method="GET">
+            <input name="q" type="search" placeholder="Поиск...">
+        </form>
+    </div>
+
+{% endblock %}

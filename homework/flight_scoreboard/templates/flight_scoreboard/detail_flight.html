@@ -1,0 +1,18 @@
+{% extends 'base.html '%}
+
+{% block title %} Рейс №{{flight.number}} {% endblock %}
+
+{% block content %}
+<div style="text-align:center;">
+    <h1>Информация по борту №{{flight.number}}</h1>
+    <p>Тип самолета: {{flight.type_airplane}}</p>
+    <p>Город отправления: {{flight.dispatch_city}}</p>
+    <p>Время отправления: {{flight.departure_time|date:"d/m/Y H:i"}}</p>
+    <p>Город прибытия: {{flight.arrival_city}}</p>
+    <p>Время прибытия: {{flight.arrival_time|date:"d/m/Y H:i"}}</p>
+    <p>Статус: {{flight.status}}</p>
+    <br>
+    <a href="{% url 'flight_scoreboard:edit_flight' flight.id %}"><input type="button" value="Редактировать"></a>
+    <a href="{% url 'flight_scoreboard:delete_flight' flight.id %}"><input type="button" value="Удалить рейс"></a>
+</div>
+{% endblock %}

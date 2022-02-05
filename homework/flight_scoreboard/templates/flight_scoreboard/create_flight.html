@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %} Создать рейс {% endblock %}
+
+{% block content %}
+    <div style="text-align:center;">
+        <form action="." method="POST">
+            {% csrf_token %}
+            {{form.as_p}}<br>
+            <input type="submit" value="Создать новый рейс">
+        </form>
+    </div>
+{% endblock %}

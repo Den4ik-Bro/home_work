@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %} Редактировать рейс {% endblock %}
+
+{% block content %}
+<div style="text-align:center;">
+    <form action="." method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить"><br>
+    </form>
+</div>
+{% endblock %}
