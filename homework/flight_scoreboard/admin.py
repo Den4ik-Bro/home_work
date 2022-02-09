@@ -4,6 +4,8 @@ from . import models
 
 class FlightAdmin(admin.ModelAdmin):
     search_field = ('Status__title', 'City__name')
+    # list_filter = ('arrival_city', 'status',)
+    # list_display = ('number', 'arrival_city', 'status',)
 
 
 admin.site.register(models.Flight, FlightAdmin)

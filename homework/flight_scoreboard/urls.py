@@ -12,10 +12,10 @@ app_name = 'flight_scoreboard'
 
 
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
-    url(r'^detail_flight/(?P<flight_id>[0-9]+)/$', views.detail_flight, name='current_flight'),
-    url(r'^detail_flight/(?P<flight_id>[0-9]+)/edit/$', views.edit_flight, name='edit_flight'),
-    url(r'^delete_flight/(?P<flight_id>[0-9]+)/$', views.delete_flight, name='delete_flight'),
-    url(r'^create_flight/$', views.create_flight, name='create_flight'),
+    url(r'^$', views.Home.as_view(), name='home'),
+    url(r'^detail_flight/(?P<pk>[0-9]+)/$', views.DetailFlightView.as_view(), name='current_flight'),
+    url(r'^detail_flight/(?P<pk>[0-9]+)/edit/$', views.UpdateFlightView.as_view(), name='edit_flight'),
+    url(r'^delete_flight/(?P<pk>[0-9]+)/$', views.DeleteFlightsView.as_view(), name='delete_flight'),
+    url(r'^create_flight/$', views.CreateFlightView.as_view(), name='create_flight'),
     url('^api/', include(router.urls)),
 ]

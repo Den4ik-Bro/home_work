@@ -1,15 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals
-
 import datetime
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import CASCADE, PROTECT
 
 
 class Flight(models.Model):
-    number = models.CharField(max_length=10, verbose_name='номер самолета')
+    number = models.CharField(max_length=10, verbose_name='номер самолета', validators=[])
     type_airplane = models.ForeignKey('TypeAirplane', on_delete=CASCADE, verbose_name='тип самолета')
     arrival_city = models.ForeignKey(
         'City',

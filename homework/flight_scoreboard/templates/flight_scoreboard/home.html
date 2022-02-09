@@ -26,13 +26,33 @@
         </tr>
         {% endfor %}
     </table>
+
+    <div class="pagination" style="text-align:center;">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+            {% endif %}
+
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+            </span>
+            <br>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">последняя страница &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
     <br>
     <div style="text-align:center;">
         <a href="{% url 'flight_scoreboard:create_flight' %}"><input type="button" value="создать новый рейс"></a>
         <br>
         <br>
-        <form action="." method="GET">
-            <input name="q" type="search" placeholder="Поиск...">
+        <form action="." method="GET" name="q">
+            {% csrf_token %}
+            {{form.as_p}}
         </form>
     </div>
 
