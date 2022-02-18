@@ -13,6 +13,9 @@
     <p>Статус: {{flight.status}}</p>
     <br>
     <a href="{% url 'flight_scoreboard:edit_flight' flight.id %}"><input type="button" value="Редактировать"></a>
-    <a href="{% url 'flight_scoreboard:delete_flight' flight.id %}"><input type="button" value="Удалить рейс"></a>
+    <form action="{% url 'flight_scoreboard:delete_flight' flight.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Удалить рейс">
+    </form>
 </div>
 {% endblock %}

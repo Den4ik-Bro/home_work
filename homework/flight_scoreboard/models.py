@@ -1,13 +1,25 @@
-# coding=utf-8
+#-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+import re
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import CASCADE, PROTECT
 
 
+def is_correct_number(number):
+    if not re.match(r'\w\w\d{4}$', number):
+        raise ValidationError('не правильный номер')
+
+
 class Flight(models.Model):
-    number = models.CharField(max_length=10, verbose_name='номер самолета', validators=[])
+    number = models.CharField(
+        unique=True,
+        max_length=10,
+        verbose_name='номер самолета',
+        validators=[is_correct_number, ]
+    )
     type_airplane = models.ForeignKey('TypeAirplane', on_delete=CASCADE, verbose_name='тип самолета')
     arrival_city = models.ForeignKey(
         'City',
@@ -21,8 +33,8 @@ class Flight(models.Model):
         verbose_name='город отправки'
     )
     status = models.ForeignKey('Status', on_delete=PROTECT, null=True, verbose_name='статус')
-    departure_time = models.DateTimeField(default=datetime.datetime.now, verbose_name='время отправления')
-    arrival_time = models.DateTimeField(default=datetime.datetime.now, verbose_name='время прибытия')
+    departure_time = models.DateTimeField(verbose_name='время отправления')
+    arrival_time = models.DateTimeField(verbose_name='время прибытия')
     actual_time = models.DateTimeField(verbose_name='фактическое время', blank=True, null=True)
 
     class Meta:
@@ -35,6 +47,8 @@ class Flight(models.Model):
     def clean(self):
         if self.departure_time > self.arrival_time:
             raise ValidationError('Дата отправления не может быть позже даты прибытия')
+        if self.arrival_city == self.dispatch_city:
+            raise ValidationError('города отправления/прибытия должны быть разными')
 
 
 class City(models.Model):

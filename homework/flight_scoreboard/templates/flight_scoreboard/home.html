@@ -26,24 +26,48 @@
         </tr>
         {% endfor %}
     </table>
+    {% if q %}
+        {% if page_obj.has_other_pages %}
+            <div style="text-align:center">
+                <a href="?q={{q}}&page=1">первая страница</a>
+                {% for p in paginator.page_range %}
+                    {% if p >= page_obj.number|add:-2 and p <= page.obj.number|add:2 %}
+                        <a href="?q={{q}}&page={{p}}">{{p}}</a>
+                    {% endif %}
+                {% endfor %}
+                <a href="?q={{q}}&page={{ page_obj.paginator.num_pages }}">последняя страница</a>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if page_obj.has_other_pages %}
+            <div style="text-align:center">
+                <a href="?page=1">первая страница</a>
+                {% for p in paginator.page_range %}
+                    {% if p >= page_obj.number|add:-2 and p <= page.obj.number|add:2 %}
+                        <a href="?page={{p}}">{{p}}</a>
+                    {% endif %}
+                {% endfor %}
+                <a href="?page={{ page_obj.paginator.num_pages }}">последняя страница</a>
+            </div>
+        {% endif %}
+    {% endif %}
+<!--    <div class="pagination" style="text-align:center;">-->
+<!--        <span class="step-links">-->
+<!--            {% if page_obj.has_previous %}-->
+<!--                <a href="?page=1">&laquo; первая</a>-->
+<!--                <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>-->
+<!--            {% endif %}-->
 
-    <div class="pagination" style="text-align:center;">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; первая</a>
-                <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
-            {% endif %}
-
-            <span class="current">
-                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
-            </span>
-            <br>
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">следующая</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">последняя страница &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+<!--            <span class="current">-->
+<!--                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.-->
+<!--            </span>-->
+<!--            <br>-->
+<!--            {% if page_obj.has_next %}-->
+<!--                <a href="?page={{ page_obj.next_page_number }}">следующая</a>-->
+<!--                <a href="?page={{ page_obj.paginator.num_pages }}">последняя страница &raquo;</a>-->
+<!--            {% endif %}-->
+<!--        </span>-->
+<!--    </div>-->
 
     <br>
     <div style="text-align:center;">
@@ -51,8 +75,9 @@
         <br>
         <br>
         <form action="." method="GET" name="q">
-            {% csrf_token %}
+<!--            <input type="search" placeholder="Поиск..." name="q" required="true">-->
             {{form.as_p}}
+            <button type="submit">поиск</button>
         </form>
     </div>
 
