@@ -4,6 +4,7 @@ import datetime
 import re
 
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import CASCADE, PROTECT
 
@@ -40,9 +41,13 @@ class Flight(models.Model):
     class Meta:
         verbose_name = 'рейс'
         verbose_name_plural = 'рейсы'
+        ordering = ['departure_time', 'arrival_time', ]
 
     def __str__(self):
         return 'Рейс №{}'.format(self.number).encode('utf-8')
+
+    def get_absolute_url(self):
+        return reverse('flight_scoreboard:current_flight', kwargs={'pk': self.pk})
 
     def clean(self):
         if self.departure_time > self.arrival_time:

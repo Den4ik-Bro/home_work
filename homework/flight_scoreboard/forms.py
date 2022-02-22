@@ -1,11 +1,23 @@
 #-*- coding: utf-8 -*-
+from django.contrib.admin.widgets import AdminSplitDateTime
 from django.core.exceptions import ValidationError
+from django.forms import fields
+
 from . import models
 from django import forms
-from .models import Flight
 
 
 class CreateFlightForm(forms.ModelForm):
+    arrival_time = fields.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}),
+        input_formats=['%Y-%m-%dT%H:%M'],
+        label='Время прибытия'
+    )
+    departure_time = fields.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}),
+        input_formats=['%Y-%m-%dT%H:%M'],
+        label='Время отправления'
+    )
 
     class Meta:
         model = models.Flight

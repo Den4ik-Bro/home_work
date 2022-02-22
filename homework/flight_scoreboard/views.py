@@ -80,9 +80,9 @@ class UpdateFlightView(LoginRequiredMixin, UpdateView):
     template_name = 'flight_scoreboard/edit_flight.html'
     form_class = CreateFlightForm
 
-    def get_success_url(self):
-        flight = self.get_object()
-        return redirect(reverse('flight_scoreboard:current_flight', kwargs={'pk': flight.id}))
+    # def get_success_url(self):
+    #     flight = self.get_object()
+    #     return redirect(reverse('flight_scoreboard:current_flight'))
 
 
 # API
