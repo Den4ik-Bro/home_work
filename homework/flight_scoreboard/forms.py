@@ -25,7 +25,6 @@ class CreateFlightForm(forms.ModelForm):
 
 
 def validate_search_query(value):
-    print value
     if len(value) == 0:
         raise ValidationError('поле не может быть пустым')
 
@@ -39,5 +38,9 @@ class SearchForm(forms.Form):
         validators=[validate_search_query, ]
     )
 
-
+    # def clean_q(self):
+    #     data = self.cleaned_data['q']
+    #     if len(data) == 0:
+    #         raise ValidationError('Поле не может быть пустым')
+    #     return data
 

@@ -10,14 +10,18 @@ from rest_framework import filters
 from .serializers import FlightSerializer
 from models import *
 from forms import CreateFlightForm, SearchForm
+import logging
 
 
-class Home(ListView):
+logger = logging.getLogger('homework.flight_scoreboard.views')
+
+
+class FlightListView(ListView):
     queryset = Flight.objects.filter(
         Q(arrival_time__gte=(datetime.datetime.now())) |
         Q(departure_time__gte=(datetime.datetime.now()))
     )
-    template_name = 'flight_scoreboard/home.html'
+    template_name = 'flight_scoreboard/flight_list.html'
     context_object_name = 'flights'
     paginate_by = 5
     form_class = SearchForm
@@ -28,6 +32,9 @@ class Home(ListView):
         if 'q' in self.request.GET:
             form = self.form_class(self.request.GET)
             if form.is_valid():
+                logger.debug('запрос страницы {1} на получение рейсов с параметрами: {0}'
+                             .format(form.cleaned_data['q'].encode('utf-8'),
+                                     request.GET.get(self.page_kwarg, 1)))
                 context[self.context_object_name] = self.get_queryset().filter(
                     Q(arrival_city__name__icontains=form.cleaned_data['q']) |
                     Q(dispatch_city__name__icontains=form.cleaned_data['q']) |
@@ -35,10 +42,13 @@ class Home(ListView):
                 )
             else:
                 context['form'] = form
+        else:
+            logger.debug('запрос страницы {0} на получение рейсов без параметров'
+                         .format(request.GET.get(self.page_kwarg, 1)))
         return self.render_to_response(context)
 
     def get_queryset(self):
-        return super(Home, self).get_queryset().select_related(
+        return super(FlightListView, self).get_queryset().select_related(
                 'type_airplane',
                 'arrival_city',
                 'dispatch_city',
@@ -46,7 +56,7 @@ class Home(ListView):
             )
 
     def get_context_data(self, **kwargs):
-        context = super(Home, self).get_context_data(**kwargs)
+        context = super(FlightListView, self).get_context_data(**kwargs)
         form = self.form_class()
         context['form'] = form
         context['q'] = self.request.GET.get('q')
@@ -82,7 +92,7 @@ class UpdateFlightView(LoginRequiredMixin, UpdateView):
 
     # def get_success_url(self):
     #     flight = self.get_object()
-    #     return redirect(reverse('flight_scoreboard:current_flight'))
+    #     return reverse('flight_scoreboard:current_flight', kwargs=)
 
 
 # API

@@ -26,4 +26,4 @@ class FlightModelTestCase(TestCase):
     def test_flight_number_label(self):
         flight = Flight.objects.get(id=1)
         field_label = flight._meta.get_field('number').verbose_name
-        self.assertEqual(field_label, 'номер самолета')
+        self.assertEqual(field_label.encode('utf-8'), 'номер самолета')

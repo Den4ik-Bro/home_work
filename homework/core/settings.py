@@ -117,7 +117,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -138,18 +138,34 @@ REST_FRAMEWORK = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
+        }
+    },
     'handlers': {
-        'file': {
+        'query_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
         },
+        'info_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/info.log'),
+            'formatter': 'verbose',
+        }
     },
     'loggers': {
         'django.db.backends': {
-            'handlers': ['file'],
+            'handlers': ['query_file'],
             'level': 'DEBUG',
             'propagate': True,
         },
+        'homework.flight_scoreboard.views': {
+            'handlers': ['info_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
     },
 }

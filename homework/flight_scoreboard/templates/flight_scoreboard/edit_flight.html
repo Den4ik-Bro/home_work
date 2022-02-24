@@ -8,5 +8,8 @@
         {{ form.as_p }}
         <input type="submit" value="Сохранить"><br>
     </form>
+    <br>
+
+    <a href="{% url 'flight_scoreboard:flight_list' %}"><input type="button" value="назад"></a>
 </div>
 {% endblock %}
