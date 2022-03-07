@@ -69,6 +69,17 @@ class CreateFlightView(LoginRequiredMixin, CreateView):
     form_class = CreateFlightForm
     success_url = '/'
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            flight = form.save()
+            instance = Flight.objects.only('id').get(pk=flight.id)
+            logger.debug('создание нового объекта flight c id: {}'.format(instance.id))
+            return redirect(reverse('flight_scoreboard:flight_list'))
+        else:
+            logger.debug('не удачная попытка создания нового объекта flight')
+            return super(CreateFlightView, self).get(request)
+
 
 class DetailFlightView(LoginRequiredMixin, DetailView):
     model = Flight
@@ -89,10 +100,6 @@ class UpdateFlightView(LoginRequiredMixin, UpdateView):
     model = Flight
     template_name = 'flight_scoreboard/edit_flight.html'
     form_class = CreateFlightForm
-
-    # def get_success_url(self):
-    #     flight = self.get_object()
-    #     return reverse('flight_scoreboard:current_flight', kwargs=)
 
 
 # API
