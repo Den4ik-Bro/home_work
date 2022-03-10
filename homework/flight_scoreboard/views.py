@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 import django_filters.rest_framework
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
@@ -27,25 +27,9 @@ class FlightListView(ListView):
     form_class = SearchForm
 
     def get(self, request):
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-        if 'q' in self.request.GET:
-            form = self.form_class(self.request.GET)
-            if form.is_valid():
-                logger.debug('запрос страницы {1} на получение рейсов с параметрами: {0}'
-                             .format(form.cleaned_data['q'].encode('utf-8'),
-                                     request.GET.get(self.page_kwarg, 1)))
-                context[self.context_object_name] = self.get_queryset().filter(
-                    Q(arrival_city__name__icontains=form.cleaned_data['q']) |
-                    Q(dispatch_city__name__icontains=form.cleaned_data['q']) |
-                    Q(status__title__icontains=form.cleaned_data['q'])
-                )
-            else:
-                context['form'] = form
-        else:
-            logger.debug('запрос страницы {0} на получение рейсов без параметров'
-                         .format(request.GET.get(self.page_kwarg, 1)))
-        return self.render_to_response(context)
+        logger.debug('запрос страницы {0} на получение рейсов без параметров'
+                     .format(request.GET.get(self.page_kwarg, 1)))
+        return super(FlightListView, self).get(request)
 
     def get_queryset(self):
         return super(FlightListView, self).get_queryset().select_related(
@@ -61,6 +45,33 @@ class FlightListView(ListView):
         context['form'] = form
         context['q'] = self.request.GET.get('q')
         return context
+
+
+class Search(FlightListView):
+    paginate_by = 5
+
+    def get_queryset(self):
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            logger.debug('запрос страницы {1} на получение рейсов с параметрами: {0}'
+                         .format(form.cleaned_data['q'].encode('utf-8'),
+                                 self.request.GET.get(self.page_kwarg, 1)))
+            return super(FlightListView, self).get_queryset().select_related(
+                'type_airplane',
+                'arrival_city',
+                'dispatch_city',
+                'status',
+            ).filter(
+                Q(arrival_city__name__icontains=form.cleaned_data['q']) |
+                Q(dispatch_city__name__icontains=form.cleaned_data['q']) |
+                Q(status__title__icontains=form.cleaned_data['q'])
+            )
+        return super(FlightListView, self).get_queryset().select_related(
+            'type_airplane',
+            'arrival_city',
+            'dispatch_city',
+            'status',
+        )
 
 
 class CreateFlightView(LoginRequiredMixin, CreateView):

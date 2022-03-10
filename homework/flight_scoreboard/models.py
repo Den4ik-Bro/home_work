@@ -41,7 +41,7 @@ class Flight(models.Model):
     class Meta:
         verbose_name = 'рейс'
         verbose_name_plural = 'рейсы'
-        ordering = ['departure_time', 'arrival_time', ]
+        ordering = ['-departure_time', '-arrival_time', ]
 
     def __str__(self):
         return 'Рейс №{}'.format(self.number).encode('utf-8')
