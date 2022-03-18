@@ -27,17 +27,43 @@ class FlightListView(ListView):
     form_class = SearchForm
 
     def get(self, request):
-        logger.debug('запрос страницы {0} на получение рейсов без параметров'
-                     .format(request.GET.get(self.page_kwarg, 1)))
-        return super(FlightListView, self).get(request)
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        paginator, page, queryset, is_paginated = self.paginate_queryset\
+            (
+                self.object_list,
+                self.paginate_by
+            )
+        context.update({
+            'paginator': paginator,
+            'page_obj': page,
+            'is_paginated': is_paginated,
+            self.context_object_name: queryset
+        })
+        return self.render_to_response(context)
 
     def get_queryset(self):
-        return super(FlightListView, self).get_queryset().select_related(
+        queryset = super(FlightListView, self).get_queryset().select_related(
                 'type_airplane',
                 'arrival_city',
                 'dispatch_city',
                 'status',
             )
+        if 'q' in self.request.GET:
+            form = self.form_class(self.request.GET)
+            if form.is_valid():
+                logger.debug('запрос страницы {1} на получение рейсов с параметрами: {0}'
+                             .format(form.cleaned_data['q'].encode('utf-8'),
+                                     self.request.GET.get(self.page_kwarg, 1)))
+                queryset = queryset.filter(
+                        Q(arrival_city__name__icontains=form.cleaned_data['q']) |
+                        Q(dispatch_city__name__icontains=form.cleaned_data['q']) |
+                        Q(status__title__icontains=form.cleaned_data['q'])
+                    )
+        else:
+             logger.debug('запрос страницы {0} на получение рейсов без параметров'
+                         .format(self.request.GET.get(self.page_kwarg, 1)))
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(FlightListView, self).get_context_data(**kwargs)
@@ -45,33 +71,6 @@ class FlightListView(ListView):
         context['form'] = form
         context['q'] = self.request.GET.get('q')
         return context
-
-
-class Search(FlightListView):
-    paginate_by = 5
-
-    def get_queryset(self):
-        form = self.form_class(self.request.GET)
-        if form.is_valid():
-            logger.debug('запрос страницы {1} на получение рейсов с параметрами: {0}'
-                         .format(form.cleaned_data['q'].encode('utf-8'),
-                                 self.request.GET.get(self.page_kwarg, 1)))
-            return super(FlightListView, self).get_queryset().select_related(
-                'type_airplane',
-                'arrival_city',
-                'dispatch_city',
-                'status',
-            ).filter(
-                Q(arrival_city__name__icontains=form.cleaned_data['q']) |
-                Q(dispatch_city__name__icontains=form.cleaned_data['q']) |
-                Q(status__title__icontains=form.cleaned_data['q'])
-            )
-        return super(FlightListView, self).get_queryset().select_related(
-            'type_airplane',
-            'arrival_city',
-            'dispatch_city',
-            'status',
-        )
 
 
 class CreateFlightView(LoginRequiredMixin, CreateView):
@@ -103,8 +102,8 @@ class DeleteFlightsView(LoginRequiredMixin, DeleteView):
     template_name = 'flight_scoreboard/detail_flight.html'
     success_url = '/'
 
-    def get(self, request, pk):
-        return self.post(request, pk)
+    # def get(self, request, pk):
+    #     return self.post(request, pk)
 
 
 class UpdateFlightView(LoginRequiredMixin, UpdateView):

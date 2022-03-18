@@ -14,7 +14,7 @@
             <th>Время прибытия</th>
             <th>Статус</th>
         </tr>
-        {% for flight in flights %}
+        {% for flight in page_obj %}
         <tr>
             <td><a href="{% url 'flight_scoreboard:current_flight' flight.id %}">{{flight.number}}</a></td>
             <td>{{flight.type_airplane}}</td>
@@ -56,7 +56,7 @@
         <a href="{% url 'flight_scoreboard:create_flight' %}"><input type="button" value="создать новый рейс"></a>
         <br>
         <br>
-        <form action="{% url 'flight_scoreboard:search' %}" method="GET" name="q">
+        <form action="." method="GET" name="q">
 <!--            <input type="search" placeholder="Поиск..." name="q" required="true">-->
             {{form.as_p}}
             <button type="submit">поиск</button>
